@@ -28,6 +28,12 @@ namespace Third
             xLabel.Text = Encryption.Decrypt(encryptionResult);
         }
 
+        private void decodeWithoutPrivKey_Click(object sender, EventArgs e)
+        {
+            var dec = Encryption.DecodeWithoutPrivateKey(encryptionResult.Cipher, encryptionResult.N);
+            xLabel.Text = Encryption.Decrypt(dec);
+        }
+
         private void textBoxP_TextChanged(object sender, EventArgs e)
         {
 

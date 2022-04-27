@@ -38,6 +38,28 @@ namespace Third
             return new EncryptionResult(cipher, n, d, e);
         }
 
+        public static EncryptionResult DecodeWithoutPrivateKey(Cipher cipher, int n)
+        {
+            Tuple<int, int> result = FindPAndQ(n);
+
+            int p = result.Item1;
+            int q = result.Item2;
+
+            int fiN = FiN(p, q);
+            int e = FindE(fiN);
+
+            int d = 0;
+
+            while (d * e % fiN != 1)
+            {
+                d++;
+            }
+
+            return new EncryptionResult(cipher, n, d, e);
+            //return new EncryptionResult();
+        } 
+
+
         public static string Decrypt(EncryptionResult encryption)
         {
             string result = "";
@@ -51,6 +73,42 @@ namespace Third
             }
 
             return result;
+        }
+
+        private static Tuple<int, int> FindPAndQ(int n)
+        {
+            for (int i = 2; i < 1000; i++)
+            {
+                if (!IsPrime(i))
+                    continue;
+
+                for (int j = 2; j < 1000; j++)
+                {
+                    if (!IsPrime(j))
+                        continue;
+
+                    if (i == j)
+                        continue;
+
+                    if (i * j == n)
+                    {             
+                        return new Tuple<int, int>(i, j);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        static bool IsPrime(int n)
+        {
+            if (n > 1)
+            {
+                return Enumerable.Range(1, n).Where(x => n % x == 0)
+                                 .SequenceEqual(new[] { 1, n });
+            }
+
+            return false;
         }
 
         private static int FiN(int p, int q)
